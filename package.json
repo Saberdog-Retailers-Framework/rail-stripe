@@ -1,0 +1,17 @@
+json
+{
+  "name": "saberdog-procurement-payments",
+  "version": "1.0.0",
+  "description": "SABERDOG LLC Procurement Payment System – Stripe Invoicing + Saved PMs + ACH/ACSS",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "stripe": "^17.0.0",
+    "cors": "^2.8.5"
+  }
+}
