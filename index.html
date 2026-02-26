@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+  <form id="payment-form">
+    <div id="payment-element"></div>
+    <button id="submit">Pay $1,500.00</button>
+    <div id="error-message"></div>
+  </form>
+
+  <script>
+    const stripe = Stripe('pk_live_...'); // your publishable key
+
+    // Get clientSecret from your backend
+    async function initialize() {
+      const { clientSecret } = await fetch('/api/create-payment-intent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: 150000,
+          procurementId: 'PROC-2026-00123'
+        })
+      }).then(r => r.json());
+
+      const elements = stripe.elements({ clientSecret });
+      const paymentElement = elements.create('payment', { layout: 'accordion' });
+      paymentElement.mount('#payment-element');
+    }
+
+    // Submit handler
+    document.getElementById('payment-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const { error } = await stripe.confirmPayment({
+        elements: stripe.elements(), // same elements instance
+        confirmParams: {
+          return_url: 'https://yoursite.com/procurement/success', // Stripe redirects here after 3DS
+        },
+      });
+
+      if (error) {
+        document.getElementById('error-message').textContent = error.message;
+      }
+    });
+
+    initialize();
+  </script>
+</body>
+</html>
